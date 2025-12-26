@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:weather_app/utils/colors.dart';
+import 'package:weather_app/screens/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,6 +12,27 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late Timer _timer;
+  @override
+  void initState() {
+    _timer = Timer(Duration(seconds: 3), () {
+      //check if the widget still mounted before navigating
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WeatherAppHomeScreen()),
+        );
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   //bottom content
                   const Center(
                     child: Text(
-                      'Get to know your weather maps and\nradar recipitations forcast',
+                      'Get to know your weather maps and\nradar recipitations forecast',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -102,7 +125,16 @@ class _SplashScreenState extends State<SplashScreen> {
                           borderRadius: BorderRadius.circular(40),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        //cancel timer when btn is pressed to prevent timer navigation
+                        _timer.cancel();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WeatherAppHomeScreen(),
+                          ),
+                        );
+                      },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20,
@@ -127,8 +159,4 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-}
-
-class HomeScreen {
-  const HomeScreen();
 }

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ThemeNotifier extends Notifier<ThemeMode> {
   @override
   // build() คือ constructor ของ Notifier, เป็นจุดเริ่มต้นของ State,คล้ายๆ initState ใน StatefulWidget
-  ThemeMode build() => ThemeMode.light;
+  ThemeMode build() => ThemeMode.dark;
   void toggleTheme() {
     //เมื่อเปลี่ยนค่าให้ state, Riverpod จะรู้ทันทีว่าข้อมูลเปลี่ยนแล้ว และจะไปสั่งให้หน้าจอ (Widget) ที่ใช้งาน Provider นี้วาดใหม่ (Rebuild) โดยอัตโนมัติ
     state = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 final lightTheme = ThemeData(
   brightness: Brightness.light,
-  primaryColor: Color(0xFF1a1a16),
+  scaffoldBackgroundColor: Colors.white,
+  primaryColor: Colors.white, // Change from 0xFF1a1a16 (Dark Grey) to White
   colorScheme: ColorScheme.light(
-    primary: Color(0xFF1a1a16),
+    primary: Colors.white,
     secondary: Color(0xFFd98f1e),
     tertiary: Color(0xFF1a1a16),
   ),
@@ -12,7 +13,7 @@ final lightTheme = ThemeData(
 
 final darkTheme = ThemeData(
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: Color(0xFF0F0D1C), // gradientBottom
+  scaffoldBackgroundColor: Color(0xFF1a1a16), // Old Dark Grey requested
   primaryColor: Color(0xFF3C1F67), // gradientMiddle
   colorScheme: ColorScheme.dark(
     primary: Color(0xFF3C1F67),

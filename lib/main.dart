@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/screens/home_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:weather_app/provider/theme_provider.dart';
 import 'package:weather_app/screens/splash_screen.dart';
+import 'package:weather_app/theme/theme.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeNotifierProvider);
     return MaterialApp(
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
       debugShowCheckedModeBanner: false,
-      title: 'Weather App',
-      theme: ThemeData(primarySwatch: Colors.blue),
       home: const SplashScreen(),
     );
   }
