@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+//flutter pub add flutter_dotenv
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String apiKey = dotenv.env['API_KEY'] ?? '';
 
 class WeatherApiService {
-  final String _baseUrl = 'https://www.weatherapi.com/v1';
+  final String _baseUrl = 'https://api.weatherapi.com/v1';
   Future<Map<String, dynamic>> getHourlyForecast(String location) async {
     final url = Uri.parse(
       '$_baseUrl/forecast.json?key=$apiKey&q=$location&day=7',

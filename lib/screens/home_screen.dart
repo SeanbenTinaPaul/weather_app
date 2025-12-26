@@ -45,6 +45,7 @@ class _WeatherAppHomeScreenState extends ConsumerState<WeatherAppHomeScreen> {
         country = forecast['location']?['country'] ?? '';
 
         isLoading = false;
+        debugPrint('currentValue: $currentValue');
       });
     } catch (e) {
       setState(() {
@@ -52,22 +53,40 @@ class _WeatherAppHomeScreenState extends ConsumerState<WeatherAppHomeScreen> {
         hourly = [];
         next7days = [];
         pastWeek = [];
-        city = '';
-        country = '';
+        // city = '';
+        // country = '';
         isLoading = false;
       });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('City not found or invalid. Please try again.')),
+      );
     }
   }
 
+  //content displayed
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeNotifierProvider);
     final notifier = ref.read(themeNotifierProvider.notifier);
-    final isDarkMode = themeMode == ThemeMode.dark;
-
+    final isDarkMode = themeMode == ThemeMode.dark; //set initial theme mode
     debugPrint('Current Theme Mode: $themeMode, isDarkMode: $isDarkMode');
 
-    final contentColor = isDarkMode ? Colors.white : Colors.black;
+    //select weather icon
+    String iconPath = currentValue['condition']?['icon'] ?? '';
+    debugPrint(
+      'iconPath: $iconPath',
+    ); //cdn.weatherapi.com/weather/64x64/night/113.png
+    String imgUrl = iconPath.isNotEmpty ? 'https:$iconPath' : 'assets/images/';
+
+    Widget imageWidget = imgUrl.isNotEmpty
+        ? Image.network(imgUrl, height: 200, width: 200, fit: BoxFit.cover)
+        : Image.asset(imgUrl, height: 200, width: 200, fit: BoxFit.cover);
+
+    // prior to theme.dart
+    final contentColor = isDarkMode
+        ? const Color(0xFFEEEEEE)
+        : const Color(0xFF333333);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -79,16 +98,27 @@ class _WeatherAppHomeScreenState extends ConsumerState<WeatherAppHomeScreen> {
             width: 320,
             height: 50,
             child: TextField(
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              onSubmitted: (value) {
+                if (value.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please enter a city name.')),
+                  );
+                  return;
+                }
+                city = value.trim();
+                _fetchWeatherData();
+              },
               decoration: InputDecoration(
                 labelText: 'Search City',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                suffixIcon: Icon(Icons.search, color: contentColor),
-                labelStyle: TextStyle(color: contentColor),
+                suffixIcon: Icon(Icons.search, color: Colors.grey),
+                labelStyle: TextStyle(color: Colors.grey),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide(color: contentColor),
+                  borderSide: BorderSide(color: Colors.grey),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -113,10 +143,204 @@ class _WeatherAppHomeScreenState extends ConsumerState<WeatherAppHomeScreen> {
               // print('isDarkMode: $isDarkMode');
             },
             child: Padding(
-              padding: const EdgeInsets.only(right: 20.0),
+              padding: const EdgeInsets.only(right: 0.0),
               child: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
             ),
           ),
+          SizedBox(width: 25),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          if (isLoading)
+            const Center(child: CircularProgressIndicator())
+          else ...[
+            //display current weather
+            if (currentValue.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '$city${country.isEmpty ? '' : ', $country'}',
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    '${currentValue['temp_c']}°C',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    '${currentValue['condition']['text']}',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  imageWidget,
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Container(
+                      height: 100,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        // gradient: LinearGradient(
+                        //   colors: [
+                        //     Theme.of(context).colorScheme.primary,
+                        //     Theme.of(context).colorScheme.secondary,
+                        //   ],
+                        // ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).colorScheme.shadow,
+                            blurRadius: 10,
+                            offset: const Offset(1, 1),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/humidity.png',
+                                width: 30,
+                                height: 30,
+                                // fit: BoxFit.cover,
+                              ),
+                              Text(
+                                '${currentValue['humidity']}%',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Humidity',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/wind.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                '${currentValue['wind_kph']} km/h',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Wind Speed',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          //for max temp of a day
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/thermometer.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                '${hourly.isNotEmpty ? hourly.map((h) => h['temp_c']).reduce((a, b) => a > b ? a : b).toString() : 'N/A'}°C',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Today\'s High',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          //for uv index
+                          //for uv index
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/uv_index.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                              Text(
+                                '${currentValue['uv']}',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'UV Index',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
         ],
       ),
     );
