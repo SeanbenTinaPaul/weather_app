@@ -11,7 +11,7 @@ class WeatherApiService {
   final String _baseUrl = 'https://api.weatherapi.com/v1';
   Future<Map<String, dynamic>> getHourlyForecast(String location) async {
     final url = Uri.parse(
-      '$_baseUrl/forecast.json?key=$apiKey&q=$location&day=7',
+      '$_baseUrl/forecast.json?key=$apiKey&q=$location&days=7',
     );
     final res = await http.get(url);
     if (res.statusCode != 200) {
