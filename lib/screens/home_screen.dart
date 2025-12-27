@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:weather_app/provider/theme_provider.dart';
 import 'package:weather_app/screens/weekly_forecast_screen.dart';
 import 'package:weather_app/service/api_service.dart';
+import 'package:weather_app/screens/splash_screen.dart';
 
 class WeatherAppHomeScreen extends ConsumerStatefulWidget {
   const WeatherAppHomeScreen({super.key});
@@ -99,51 +100,59 @@ class _WeatherAppHomeScreenState extends ConsumerState<WeatherAppHomeScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        actions: [
-          SizedBox(width: 25),
-          ////search bar
-          SizedBox(
-            width: 320,
-            height: 50,
-            child: TextField(
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              onSubmitted: (value) {
-                if (value.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please enter a city name.')),
-                  );
-                  return;
-                }
-                city = value.trim();
-                _fetchWeatherData();
-              },
-              decoration: InputDecoration(
-                labelText: 'Search City',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                suffixIcon: Icon(Icons.search, color: Colors.grey),
-                labelStyle: TextStyle(color: Colors.grey),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: contentColor),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide(color: contentColor),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: contentColor),
-                ),
+        title: SizedBox(
+          height: 50,
+          child: TextField(
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            onSubmitted: (value) {
+              if (value.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Please enter a city name.')),
+                );
+                return;
+              }
+              city = value.trim();
+              _fetchWeatherData();
+            },
+            decoration: InputDecoration(
+              labelText: 'Search City',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              suffixIcon: Icon(Icons.search, color: Colors.grey),
+              labelStyle: TextStyle(color: Colors.grey),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: contentColor),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+                borderSide: BorderSide(color: contentColor),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: contentColor),
               ),
             ),
           ),
-          Spacer(),
+        ),
+        actions: [
+          // Subtle logout button
+          IconButton(
+            icon: Icon(Icons.logout, size: 20, color: Colors.grey),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const SplashScreen()),
+                (route) => false,
+              );
+            },
+          ),
+          SizedBox(width: 10),
           //// toggle theme btn
           GestureDetector(
             onTap: () {

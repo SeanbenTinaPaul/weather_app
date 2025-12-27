@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:weather_app/provider/theme_provider.dart';
+import 'package:weather_app/screens/splash_screen.dart';
 
 class WeeklyForecastScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> currentValue;
@@ -79,6 +80,26 @@ class _WeeklyForecastScreenState extends ConsumerState<WeeklyForecastScreen> {
                         color: Theme.of(context).colorScheme.onSurface,
                         size: 20,
                       ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SplashScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(Icons.logout, color: Colors.grey, size: 20),
                     ),
                   ),
                 ],
