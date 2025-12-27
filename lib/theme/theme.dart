@@ -9,11 +9,11 @@ final lightTheme = ThemeData(
     secondary: Color(0xFFd98f1e),
     tertiary: Color(0xFF1a1a16),
     shadow: Colors.grey.withValues(alpha: 0.3),
-    surface: Color(0xFFF9F9F9),
+    surface: Color.fromARGB(255, 241, 241, 241),
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Color(0xFF333333)), // Soft Black
-    bodyMedium: TextStyle(color: Color(0xFF4F4F4F)), // Dark Grey
+    bodyMedium: TextStyle(color: Color.fromARGB(255, 96, 96, 96)), // Dark Grey
     titleLarge: TextStyle(
       color: Color(0xFF333333),
       fontWeight: FontWeight.bold,
@@ -30,7 +30,7 @@ final darkTheme = ThemeData(
     secondary: const Color.fromARGB(255, 194, 109, 53),
     tertiary: Color(0xFFEEEEEE),
     shadow: Color.fromARGB(255, 70, 70, 70),
-    surface: Color(0xFF1E1E1E),
+    surface: Color.fromARGB(255, 19, 19, 19),
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Colors.white),
