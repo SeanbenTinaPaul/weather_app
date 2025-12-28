@@ -425,6 +425,7 @@ class _WeatherAppHomeScreenState extends ConsumerState<WeatherAppHomeScreen> {
                                   Divider(
                                     color: Theme.of(context).colorScheme.shadow,
                                   ),
+                                  //// time forecast carousel
                                   const SizedBox(height: 10),
                                   SizedBox(
                                     height: 150,
